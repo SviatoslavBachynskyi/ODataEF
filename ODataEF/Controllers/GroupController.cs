@@ -26,8 +26,7 @@ namespace ODataEF.Controllers
 		[EnableQuery]
 		public IQueryable<GroupEntity> GetGroups()
 		{
-			var queryable = _groups.AsQueryable();
-			return queryable;
+			return _groups.AsQueryable();
 		}
 
 		[HttpGet("mapping")]

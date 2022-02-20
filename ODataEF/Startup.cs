@@ -24,7 +24,9 @@ namespace ODataEF
 		{
 			services.AddDbContext<OdataEfDbContext>(options =>
 				options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
 			services.AddControllers().AddOData(options => options.EnableQueryFeatures());
+			
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "ODataEF", Version = "v1" });
