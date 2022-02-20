@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using ODataEF.Dtos;
 using ODataEF.Entities;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ODataEF.Controllers
@@ -33,6 +35,21 @@ namespace ODataEF.Controllers
 		public IQueryable<StudentDto> GetStudentsWithMapping()
 		{
 			return _mapper.ProjectTo<StudentDto>(_students);
+		}
+
+		[HttpGet("external")]
+		public List<StudentDto> GetStudentsWithExternalCall(ODataQueryOptions<StudentEntity> queryOptions)
+		{
+			var studentsQuery = queryOptions.ApplyTo(_students).OfType<StudentEntity>();
+			var studentsList = _mapper.Map<List<StudentDto>>(studentsQuery.ToList());
+
+			var random = new Random();
+			foreach (var student in studentsList)
+			{
+				student.ExternalValue = random.Next(1, 10);
+			}
+
+			return studentsList;
 		}
 	}
 }
