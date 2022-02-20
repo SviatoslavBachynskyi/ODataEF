@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using ODataEF.Dtos;
 using ODataEF.Entities;
+using System.Linq;
 
 namespace ODataEF.Controllers
 {
@@ -11,9 +13,11 @@ namespace ODataEF.Controllers
 	public class StudentController : ControllerBase
 	{
 		private readonly DbSet<StudentEntity> _students;
+		private readonly IMapper _mapper;
 
-		public StudentController(OdataEfDbContext odataEfDbContext)
+		public StudentController(OdataEfDbContext odataEfDbContext, IMapper mapper)
 		{
+			_mapper = mapper;
 			_students = odataEfDbContext.Students;
 		}
 
@@ -21,8 +25,14 @@ namespace ODataEF.Controllers
 		[EnableQuery]
 		public IQueryable<StudentEntity> GetStudents()
 		{
-			var queryable = _students.AsQueryable();
-			return queryable;
+			return _students.AsQueryable();
+		}
+
+		[HttpGet("mapping")]
+		[EnableQuery]
+		public IQueryable<StudentDto> GetStudentsWithMapping()
+		{
+			return _mapper.ProjectTo<StudentDto>(_students);
 		}
 	}
 }
