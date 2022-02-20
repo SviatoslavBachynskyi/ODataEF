@@ -8,8 +8,10 @@ namespace ODataEF
 	{
 		public MapperProfile()
 		{
-			this.CreateMap<StudentEntity, StudentDto>();
-			this.CreateMap<GroupEntity, GroupDto>();
+			this.CreateMap<StudentEntity, StudentDto>()
+				.ForMember(s => s.Group, opt => opt.ExplicitExpansion());
+			this.CreateMap<GroupEntity, GroupDto>()
+				.ForMember(g => g.Students, opt => opt.ExplicitExpansion());
 		}
 	}
 }
