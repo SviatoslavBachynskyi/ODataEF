@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using ODataEF.Dtos;
 using ODataEF.Entities;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ODataEF.Controllers
 {
@@ -11,9 +14,11 @@ namespace ODataEF.Controllers
 	public class GroupController : ControllerBase
 	{
 		private readonly DbSet<GroupEntity> _groups;
+		private readonly IMapper _mapper;
 
-		public GroupController(OdataEfDbContext odataEfDbContext)
+		public GroupController(OdataEfDbContext odataEfDbContext, IMapper mapper)
 		{
+			_mapper = mapper;
 			_groups = odataEfDbContext.Groups;
 		}
 
@@ -23,6 +28,22 @@ namespace ODataEF.Controllers
 		{
 			var queryable = _groups.AsQueryable();
 			return queryable;
+		}
+
+		[HttpGet("mapping")]
+		[EnableQuery]
+		public IQueryable<GroupDto> GetStudentsWithMapping()
+		{
+			return _mapper.ProjectTo<GroupDto>(_groups);
+		}
+
+		[HttpGet("external")]
+		public List<GroupDto> GetStudentsWithExternalCall(ODataQueryOptions<GroupEntity> queryOptions)
+		{
+			var groupsQuery = queryOptions.ApplyTo(_groups.AsQueryable()).OfType<GroupEntity>();
+			var groupsList = _mapper.Map<List<GroupDto>>(groupsQuery.ToList());
+
+			return groupsList;
 		}
 	}
 }
