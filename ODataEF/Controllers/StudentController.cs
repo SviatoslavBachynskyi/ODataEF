@@ -43,10 +43,11 @@ namespace ODataEF.Controllers
 			var studentsQuery = queryOptions.ApplyTo(_students).OfType<StudentEntity>();
 			var studentsList = _mapper.Map<List<StudentDto>>(studentsQuery.ToList());
 
+			// random imitates call for external data
 			var random = new Random();
 			foreach (var student in studentsList)
 			{
-				student.ExternalValue = random.Next(1, 10);
+				student.ExternalValue = random.Next(1, 10); 
 			}
 
 			return studentsList;
